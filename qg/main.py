@@ -25,7 +25,7 @@ from qg.dashboard import format_trend_chart, get_trend, save_metrics
 from qg.engine import Engine
 from qg.fixer import fix_issues
 from qg.models import ScanResult, Severity
-from qg.reporter import format_wechat, generate_report, write_log
+from qg.reporter import generate_report, write_log
 from qg.scanner import scan_all, update_manifest
 from qg.verifier import verify_fixes
 

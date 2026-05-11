@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime
-from pathlib import Path
 
 from .config import load_config, get_log_path
 from .models import ScanResult
