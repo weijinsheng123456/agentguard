@@ -7,13 +7,16 @@
 from __future__ import annotations
 
 import logging
+import os
 import sqlite3
 from datetime import datetime
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-DB_PATH = Path.home() / ".hermes" / "quality-gate" / "trends.db"
+DB_PATH = Path(
+    os.environ.get("QG_HOME", Path.home() / ".config" / "agentguard")
+) / "trends.db"
 
 
 def _get_conn() -> sqlite3.Connection:

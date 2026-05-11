@@ -26,12 +26,20 @@ class Issue:
 
     @property
     def short_path(self) -> str:
-        """相对于 HERMES_HOME 的短路径"""
-        home = Path.home() / ".hermes"
+        """尽量使用相对路径显示"""
+        # 优先当前目录
         try:
-            return str(Path(self.filepath).relative_to(home))
+            return str(Path(self.filepath).relative_to(Path.cwd()))
         except ValueError:
-            return self.filepath
+            pass
+        # 其次 XDG 配置目录
+        try:
+            return str(Path(self.filepath).relative_to(
+                Path.home() / ".config" / "agentguard"
+            ))
+        except ValueError:
+            pass
+        return self.filepath
 
 
 @dataclass

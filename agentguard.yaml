@@ -1,0 +1,39 @@
+# AgentGuard 配置
+# 路径支持 $HOME 和 ~ 前缀
+
+# 要扫描的目录（默认扫描当前目录）
+scan_dirs:
+  - "."
+
+# 忽略模式（glob）
+ignore_patterns:
+  - "*__pycache__*"
+  - "*.egg-info*"
+  - "*/node_modules/*"
+  - "*/.git/*"
+  - "*/venv/*"
+  - "*/.venv/*"
+  - "*/backups/*"
+  - "*/dist/*"
+  - "*/build/*"
+
+# 严重度配置
+severity:
+  blocker_codes:
+    - "F821"       # 未定义变量
+    - "E999"       # 语法错误 (ruff)
+    - "SYNTAX"     # Python 语法错误 (py_compile)
+  auto_fix_codes:
+    - "F401"       # 未使用import
+    - "F841"       # 未使用变量
+    - "E711"       # None比较
+    - "E712"       # True/False比较
+    - "E722"       # 裸 except
+    - "HARDCODE"   # 硬编码路径
+  info_codes:
+    - "E501"       # 行太长
+    - "W"          # 所有警告
+
+# 日志
+log:
+  file: "quality-gate.log"

@@ -7,8 +7,9 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime
+from pathlib import Path
 
-from .config import HERMES_HOME
+from .config import load_config, get_log_path
 from .models import ScanResult
 
 logger = logging.getLogger(__name__)
@@ -54,11 +55,11 @@ def generate_report(result: ScanResult) -> list[str]:
 
 def write_log(report_lines: list[str]):
     """写入日志文件"""
-    log_dir = HERMES_HOME / "logs"
-    log_dir.mkdir(parents=True, exist_ok=True)
-    log_file = log_dir / "quality-gate.log"
+    config = load_config()
+    log_path = get_log_path(config)
+    log_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with open(log_file, "a") as f:
+    with open(log_path, "a") as f:
         f.write("\n")
         f.write("━" * 40 + "\n")
         f.write(f"[{datetime.now().isoformat()}]\n")

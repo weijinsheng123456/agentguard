@@ -34,15 +34,15 @@ VERSION = "1.0.0"
 
 def setup_logging():
     """配置日志"""
-    log_dir = Path.home() / ".hermes" / "logs"
-    log_dir.mkdir(parents=True, exist_ok=True)
-    log_file = log_dir / "quality-gate.log"
+    from qg.config import get_log_path
+    log_file = get_log_path(load_config())
+    log_file.parent.mkdir(parents=True, exist_ok=True)
 
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(message)s",
         handlers=[
-            logging.FileHandler(log_file),
+            logging.FileHandler(str(log_file)),
             logging.StreamHandler(),
         ],
     )
