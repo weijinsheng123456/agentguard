@@ -1,0 +1,50 @@
+#!/bin/bash
+# pre-commit — Git 预提交钩子 (v5 Python版)
+# 安装到目标仓库的 .git/hooks/pre-commit
+# 在 commit 前自动运行快速质量检查，阻止坏代码入库
+
+QG_HOME="${QG_HOME:-$HOME/.hermes/quality-gate}"
+GATE_PY="$QG_HOME/gate.py"
+
+# 只检查 Python 文件
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null | grep '\.py$' || true)
+
+if [ -z "$STAGED_FILES" ]; then
+    exit 0
+fi
+
+echo -e "\033[36m🔍 [质量门禁] 检查 staged Python 文件...\033[0m"
+
+# 调用 Python 版快速检查
+if [ -f "$GATE_PY" ]; then
+    python3 "$GATE_PY" run --quick
+    RC=$?
+    if [ $RC -ne 0 ]; then
+        echo ""
+        echo -e "\033[33m💡 快速修复方案:\033[0m"
+        echo -e "\033[33m   gate --fixme    自动修复并重新staged\033[0m"
+        echo -e "\033[33m   git commit --no-verify  跳过本次检查（不推荐）\033[0m"
+    fi
+    exit $RC
+else
+    # fallback: 降级到简单的 ruff 检查
+    HAS_ERRORS=false
+    while IFS= read -r f; do
+        [ ! -f "$f" ] && continue
+        if ! python3 -c "import py_compile; py_compile.compile('$f', doraise=True)" 2>/dev/null; then
+            echo -e "\033[31m❌ $f: 语法错误 — 提交被阻止\033[0m"
+            HAS_ERRORS=true
+            continue
+        fi
+        RUFF_OUT=$(ruff check --select=F821,E722 --output-format=json "$f" 2>/dev/null || true)
+        if [ -n "$RUFF_OUT" ] && [ "$RUFF_OUT" != "[]" ]; then
+            echo -e "\033[31m❌ $f: 存在质量问题 — 提交被阻止\033[0m"
+            HAS_ERRORS=true
+        fi
+    done <<< "$STAGED_FILES"
+    if $HAS_ERRORS; then
+        exit 1
+    fi
+    echo -e "\033[32m✅ 质量门禁检查通过\033[0m"
+    exit 0
+fi

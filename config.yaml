@@ -1,0 +1,56 @@
+# Hermes 质量门禁 v5 配置
+# 路径支持 $HOME 和 ~ 前缀
+
+# 扫描目录
+scan_dirs:
+  - "~/.hermes/scripts"
+  - "~/.hermes/skills"
+  - "~/.hermes/content-toolkit"
+  - "/home/xiaobai/hermes-agent"          # 核心Agent代码
+  - "~/.hermes/quality-gate"               # 自检
+
+# 忽略模式（glob）
+ignore_patterns:
+  - "*__pycache__*"
+  - "*.egg-info*"
+  - "*/node_modules/*"
+  - "*/.git/*"
+  - "*/venv/*"
+  - "*/.venv/*"
+  - "*/backups/*"
+  - "*/study_projects/*"       # 第三方学习代码，不归我们管
+  - "*/wasm-preview/*"         # WebAssembly 测试代码
+
+# 严重度配置
+severity:
+  blocker_codes:
+    - "F821"       # 未定义变量
+    - "E999"       # 语法错误 (ruff)
+    - "SYNTAX"     # Python 语法错误 (py_compile)
+  auto_fix_codes:
+    - "F401"       # 未使用import
+    - "F841"       # 未使用变量
+    - "E711"       # None比较
+    - "E712"       # True/False比较
+    - "E722"       # 裸 except
+    - "HARDCODE"   # 硬编码路径
+  info_codes:
+    - "E501"       # 行太长
+    - "W"          # 所有警告
+
+# Git 钩子安装目录（自动发现）
+hook_repos:
+  auto_discover: true
+  extra_repos:
+    - "/home/xiaobai/hermes-agent"
+
+# 汇报
+report:
+  to_wechat: true
+  max_summary_lines: 8
+
+# 日志
+log:
+  dir: "~/.hermes/logs"
+  file: "quality-gate.log"
+  max_size_mb: 10
