@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/hermes-labs/agentguard/main/docs/logo.png" width="120" alt="AgentGuard">
+  <img src="https://img.shields.io/badge/AgentGuard-1.0.0-8A2BE2?style=for-the-badge&logo=python&logoColor=white" width="300" alt="AgentGuard">
 </p>
-
-<h1 align="center">AgentGuard</h1>
 
 <p align="center">
   <em>AI-native quality gate for agent-generated code.</em>
@@ -17,6 +15,24 @@
   <a href="#rules">Rules</a> •
   <a href="#writing-custom-rules">Custom Rules</a> •
   <a href="#agent-audit">Agent Audit</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/weijinsheng123456/agentguard/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/weijinsheng123456/agentguard/ci.yml?branch=main&label=CI&logo=github" alt="CI">
+  </a>
+  <a href="https://pypi.org/project/agentguard/">
+    <img src="https://img.shields.io/pypi/v/agentguard?label=PyPI&logo=pypi" alt="PyPI">
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
+  </a>
+  <a href="https://github.com/weijinsheng123456/agentguard">
+    <img src="https://img.shields.io/github/last-commit/weijinsheng123456/agentguard" alt="Last Commit">
+  </a>
+  <a href="https://www.python.org/">
+    <img src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue?logo=python" alt="Python">
+  </a>
 </p>
 
 ---
@@ -100,7 +116,7 @@ gate install
 
 ### Run from source
 ```bash
-git clone https://github.com/hermes-labs/agentguard.git
+git clone https://github.com/weijinsheng123456/agentguard.git
 cd agentguard
 python gate.py run
 ```
@@ -247,10 +263,10 @@ gate.py (CLI entry)
 
 - [ ] **Phase 1** ✅ Python rewrite + plugin architecture
 - [ ] **Phase 2** ✅ AI-specific rules + agent audit + trend dashboard
-- [ ] **Phase 3** 🔄 Open-source release + CI integration
-- [ ] **Phase 4** Security rules (OWASP Top 10 for AI code)
-- [ ] **Phase 5** GitHub Actions native action
-- [ ] **Phase 6** VS Code extension
+- [ ] **Phase 3** ✅ Open-source release + CI integration
+- [ ] **Phase 4** 🔄 Security rules (OWASP Top 10 for AI code)
+- [ ] **Phase 5** 🔄 GitHub Actions native action
+- [ ] **Phase 6** 🔄 VS Code extension
 
 ---
 
