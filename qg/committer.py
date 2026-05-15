@@ -80,7 +80,7 @@ def auto_commit(fixed_files: list[tuple[str, str]]) -> dict:
             short = Path(fp).relative_to(repo_path) if Path(fp).is_relative_to(repo_path) else fp
             desc_lines.append(f"  - {short}: {desc}")
 
-        msg = f"🤖 [质量门禁] 自动修复代码质量\n" + "\n".join(desc_lines)
+        msg = "🤖 [质量门禁] 自动修复代码质量\n" + "\n".join(desc_lines)
 
         try:
             result = subprocess.run(

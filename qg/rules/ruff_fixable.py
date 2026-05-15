@@ -47,7 +47,7 @@ class RuffFixableRule(BatchRule):
     def fix(self, filepath: str, issue: Issue) -> bool:
         """使用 ruff --fix 修复整个文件"""
         try:
-            result = subprocess.run(
+            subprocess.run(
                 ["ruff", "check", "--fix", "--quiet", filepath],
                 capture_output=True, text=True, timeout=30,
             )
