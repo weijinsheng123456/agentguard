@@ -48,7 +48,7 @@ def setup_logging():
     )
 
 
-def run_full_scan(config: dict) -> ScanResult:
+def run_full_scan(config: dict, commit: bool = True) -> ScanResult:
     """完整扫描+修复+提交+审计流程"""
     result = ScanResult()
     logger = logging.getLogger(__name__)
@@ -92,10 +92,12 @@ def run_full_scan(config: dict) -> ScanResult:
                 if not verify_result["passed"]:
                     logger.warning(f"⚠️  复验发现 {len(verify_result['remaining'])} 个残留问题")
 
-            # Phase 5: 提交
-            if result.fixed_files:
+            # Phase 5: 提交（默认开启，--no-commit 关闭）
+            if result.fixed_files and commit:
                 commit_result = auto_commit(result.fixed_files)
                 result.commit_count = commit_result["commit_count"]
+            elif result.fixed_files and not commit:
+                logger.info("  ℹ️  跳过自动提交（--no-commit）")
         elif result.blocker_count > 0:
             logger.warning("⚠️  有 BLOCKER 问题，跳过自动修复")
 
@@ -292,6 +294,10 @@ def main():
     parser.add_argument("--quick", action="store_true", help="快速检查 staged 文件")
     parser.add_argument("--fixme", action="store_true", help="修复当前 staged 文件")
     parser.add_argument("--full", action="store_true", help="强制全量扫描")
+    parser.add_argument("--commit", action="store_true", default=True,
+                        help="修复后自动提交（默认开启，用 --no-commit 关闭）")
+    parser.add_argument("trend_days", nargs="?", type=int, default=14,
+                        help="趋势天数（仅 trend 命令使用）")
 
     args = parser.parse_args()
 
@@ -309,7 +315,7 @@ def main():
         return
 
     if args.command == "trend":
-        show_trend()
+        show_trend(args.trend_days)
         return
 
     # run
@@ -322,7 +328,7 @@ def main():
     elif args.fixme:
         run_fix_staged(config)
     else:
-        result = run_full_scan(config)
+        result = run_full_scan(config, commit=args.commit)
 
         # 输出报告+审计
         report_lines = generate_report(result)

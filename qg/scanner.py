@@ -15,9 +15,11 @@ import subprocess
 from pathlib import Path
 from typing import Optional
 
-from .config import HERMES_HOME, ignored_path, load_config, resolve_scan_dirs
+from .config import QG_HOME, HERMES_HOME, ignored_path, load_config, resolve_scan_dirs
 
-MANIFEST_FILE = HERMES_HOME / "data" / "file-manifest.json"
+# 优先使用 QG_HOME（独立部署），兼容 HERMES_HOME（Hermes 环境）
+MANIFEST_DIR = QG_HOME if QG_HOME.exists() else HERMES_HOME
+MANIFEST_FILE = MANIFEST_DIR / "data" / "file-manifest.json"
 
 
 def compute_file_hash(filepath: Path) -> str:
