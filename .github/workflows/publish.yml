@@ -2,14 +2,15 @@ name: Publish Python package to PyPI
 
 on:
   release:
-    types: [created]  # 只有创建 Release 时才会触发
+    types: [created]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: release
     permissions:
       contents: read
-      id-token: write  # 关键权限！Trusted Publisher 认证必须
+      id-token: write
 
     steps:
     - name: Checkout code

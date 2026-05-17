@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agentguard-tool"
-version = "1.0.4"
+version = "1.0.5"
 description = "AI-native quality gate for agent-generated code — scan, audit, auto-fix, trend"
 readme = "README.md"
 license = {file = "LICENSE"}
