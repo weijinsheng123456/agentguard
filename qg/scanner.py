@@ -116,7 +116,7 @@ def scan_all(config: Optional[dict] = None) -> dict:
 
 def update_manifest(all_files: list[str]):
     """更新文件清单 manifest"""
-    HERMES_HOME.joinpath("data").mkdir(parents=True, exist_ok=True)
+    MANIFEST_DIR.joinpath("data").mkdir(parents=True, exist_ok=True)
     manifest = {}
     for f in all_files:
         manifest[f] = compute_file_hash(Path(f))
