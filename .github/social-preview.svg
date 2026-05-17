@@ -1,0 +1,48 @@
+<svg width="1280" height="640" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#8A2BE2"/>
+      <stop offset="100%" style="stop-color:#00BFFF"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="640" fill="url(#bg)"/>
+
+  <!-- Code lines background -->
+  <text x="60" y="160" font-family="monospace" font-size="16" fill="#ffffff" opacity="0.05">def evaluate_code():</text>
+  <text x="80" y="185" font-family="monospace" font-size="14" fill="#ffffff" opacity="0.05">if "eval(" in source:</text>
+  <text x="100" y="210" font-family="monospace" font-size="14" fill="#ffffff" opacity="0.05">return BLOCKER("Unsafe API used")</text>
+  <text x="60" y="235" font-family="monospace" font-size="14" fill="#ffffff" opacity="0.05">if "sk-" in source:</text>
+  <text x="100" y="260" font-family="monospace" font-size="14" fill="#ffffff" opacity="0.05">return BLOCKER("Secret leak detected")</text>
+
+  <!-- Main title -->
+  <text x="640" y="240" font-family="Inter, sans-serif" font-size="72" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="2">AGENTGUARD</text>
+
+  <!-- Subtitle -->
+  <text x="640" y="310" font-family="Inter, sans-serif" font-size="28" fill="#BBBBBB" text-anchor="middle" letter-spacing="1">AI-native quality gate for agent-generated code</text>
+
+  <!-- Accent line -->
+  <rect x="440" y="345" width="400" height="4" rx="2" fill="url(#accent)"/>
+
+  <!-- 3 feature badges -->
+  <rect x="260" y="390" width="220" height="50" rx="25" fill="#8A2BE2" opacity="0.9"/>
+  <text x="370" y="422" font-family="Inter, sans-serif" font-size="18" font-weight="600" fill="#ffffff" text-anchor="middle">🔍 Scan</text>
+
+  <rect x="530" y="390" width="220" height="50" rx="25" fill="#8A2BE2" opacity="0.9"/>
+  <text x="640" y="422" font-family="Inter, sans-serif" font-size="18" font-weight="600" fill="#ffffff" text-anchor="middle">🔧 Auto-Fix</text>
+
+  <rect x="800" y="390" width="220" height="50" rx="25" fill="#8A2BE2" opacity="0.9"/>
+  <text x="910" y="422" font-family="Inter, sans-serif" font-size="18" font-weight="600" fill="#ffffff" text-anchor="middle">📈 Track</text>
+
+  <!-- Terminal bottom bar -->
+  <rect x="0" y="540" width="1280" height="100" fill="#0D0D1A"/>
+  <text x="60" y="580" font-family="monospace" font-size="20" fill="#00FF88">$ pip install agentguard</text>
+  <text x="60" y="615" font-family="monospace" font-size="20" fill="#00FF88">$ gate run → 0 blocker issues ✅</text>
+
+  <!-- Tag -->
+  <text x="640" y="500" font-family="Inter, sans-serif" font-size="16" fill="#888888" text-anchor="middle">pip install agentguard · 8 rules · 0 dependencies</text>
+</svg>
