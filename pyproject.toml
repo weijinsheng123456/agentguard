@@ -3,8 +3,8 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "agentguard"
-version = "1.0.0"
+name = "agentguard-tool"
+version = "1.0.2"
 description = "AI-native quality gate for agent-generated code — scan, audit, auto-fix, trend"
 readme = "README.md"
 license = {text = "MIT"}

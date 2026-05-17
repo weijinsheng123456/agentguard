@@ -43,7 +43,7 @@
 # 🚀 Install in 3 seconds
 
 ```bash
-pip install agentguard
+pip install agentguard-tool
 cd your-project
 gate run
 ```
@@ -114,7 +114,7 @@ class MyRule(Rule):
 
 ```bash
 # 🎯 Scan your project
-pip install agentguard
+pip install agentguard-tool
 cd your-project
 gate run
 
