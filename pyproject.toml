@@ -7,7 +7,7 @@ name = "agentguard-tool"
 version = "1.0.3"
 description = "AI-native quality gate for agent-generated code — scan, audit, auto-fix, trend"
 readme = "README.md"
-license = "MIT"
+license = {file = "LICENSE"}
 requires-python = ">=3.10"
 authors = [
     {name = "Hermes Labs"},
