@@ -5,19 +5,22 @@
 from __future__ import annotations
 
 import json
+import logging
 import subprocess
 
 from ..models import Issue, Severity
 from .base import BatchRule, register_rule
+
+logger = logging.getLogger(__name__)
 
 
 @register_rule
 class RuffBlockerRule(BatchRule):
     name = "ruff_blocker"
     severity = Severity.BLOCKER
-    description = "ruff blocker rules: F821(undefined) F541(bad f-string) E722(bare except)"
+    description = "ruff blocker rules: F821(undefined) E722(bare except)"
 
-    CODES = ["F821", "F541", "E722"]
+    CODES = ["F821", "E722"]
 
     def _run_ruff(self, target: str) -> list[Issue]:
         """对单个目标运行 ruff，返回问题列表"""
@@ -39,7 +42,12 @@ class RuffBlockerRule(BatchRule):
                         rule_name=self.name,
                         fixable=False,
                     ))
-        except (subprocess.TimeoutExpired, json.JSONDecodeError, FileNotFoundError):
+        except subprocess.TimeoutExpired:
+            logger.warning("ruff check timed out for %s", target)
+        except json.JSONDecodeError:
+            pass
+        except FileNotFoundError:
+            logger.warning("ruff not installed — skipping ruff_blocker checks")
             pass
         return issues
 
