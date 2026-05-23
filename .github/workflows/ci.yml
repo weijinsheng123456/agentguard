@@ -37,12 +37,4 @@ jobs:
 
     - name: Test
       run: |
-        python -m pytest tests/ -v
-
-    - name: Archive trend data
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: quality-trend-${{ matrix.python-version }}
-        path: ~/.hermes/quality-gate/trends.db
-        retention-days: 7
+        python -m pytest tests/ -v -x

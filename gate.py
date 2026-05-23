@@ -18,7 +18,7 @@ import logging
 import sys
 from pathlib import Path
 
-# 确保 qg 包在路径上
+# Ensure qg package is on path
 QG_HOME = Path(__file__).resolve().parent
 sys.path.insert(0, str(QG_HOME))
 
@@ -40,7 +40,7 @@ VERSION = "6.0.0"
 
 
 def setup_logging():
-    """配置日志"""
+    """Configure logging"""
     log_dir = Path.home() / ".hermes" / "logs"
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "quality-gate.log"
@@ -56,7 +56,7 @@ def setup_logging():
 
 
 def run_full_scan(config: dict) -> ScanResult:
-    """完整扫描+修复+提交+审计流程"""
+    """Full scan + fix + commit + audit pipeline"""
     result = ScanResult()
     logger = logging.getLogger(__name__)
 
@@ -176,7 +176,7 @@ def run_full_scan(config: dict) -> ScanResult:
 
 
 def run_quick_check(config: dict) -> bool:
-    """快速检查（给 pre-commit 用）"""
+    """Quick check (for pre-commit hook)"""
     import subprocess
 
     logger = logging.getLogger(__name__)
@@ -187,8 +187,8 @@ def run_quick_check(config: dict) -> bool:
             capture_output=True, text=True, timeout=10,
         )
         staged_files = [f for f in result.stdout.strip().split("\n") if f.endswith(".py")]
-    except subprocess.TimeoutExpired:
-        logger.error("git diff timed out")
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        logger.warning("git not available, skipping quick check")
         return True
 
     if not staged_files:
@@ -221,7 +221,7 @@ def run_quick_check(config: dict) -> bool:
 
 
 def run_fix_staged(config: dict) -> bool:
-    """修复当前 staged 文件"""
+    """Fix currently staged files"""
     import subprocess
 
     logger = logging.getLogger(__name__)
@@ -232,8 +232,8 @@ def run_fix_staged(config: dict) -> bool:
             capture_output=True, text=True, timeout=10,
         )
         staged_files = [f for f in result.stdout.strip().split("\n") if f.endswith(".py") and Path(f).exists()]
-    except subprocess.TimeoutExpired:
-        logger.error("git diff timed out")
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        logger.warning("git not available, skipping fixme")
         return False
 
     if not staged_files:
@@ -260,7 +260,7 @@ def run_fix_staged(config: dict) -> bool:
 
 
 def run_audit():
-    """单独运行Agent行为审计"""
+    """Run Agent behavior audit only"""
     setup_logging()
     logger = logging.getLogger(__name__)
     logger.info("📊 Running Agent behavior audit...")
@@ -272,7 +272,7 @@ def run_audit():
 
 
 def show_trend(days: int = 14):
-    """显示质量趋势仪表盘"""
+    """Display quality trend dashboard"""
     data = get_trend(days)
     lines = format_trend_chart(data)
     for line in lines:
@@ -280,7 +280,7 @@ def show_trend(days: int = 14):
 
 
 def install():
-    """初始化安装"""
+    """Initialize installation"""
 
     logger = logging.getLogger(__name__)
     qg_dir = QG_DIR
@@ -309,10 +309,10 @@ def install():
                     import shutil
                     shutil.copy2(str(hook_src), str(hook_dst))
                     hook_dst.chmod(0o755)
-                    logger.info(f"  ✅ 钩子已安装: {parent.name}")
+                    logger.info(f"  ✅ Hook installed: {parent.name}")
                 break
 
-    logger.info("🗂️  初始化文件清单...")
+    logger.info("🗂️  Initializing file manifest...")
     config = load_config()
     scan_data = scan_all(config)
     update_manifest(scan_data["all_files"])

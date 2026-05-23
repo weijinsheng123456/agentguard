@@ -14,13 +14,22 @@ from qg.rules.base import discover_rules, get_all_rules
 
 
 def test_rules_load():
-    """All 8 rules should load without errors."""
+    """All 17 rules should load without errors."""
     discover_rules()
     rules = get_all_rules()
-    assert len(rules) >= 8, f"Expected >=8 rules, got {len(rules)}"
+    assert len(rules) >= 17, f"Expected >=17 rules, got {len(rules)}"
     names = [r.name for r in rules]
     assert "unsafe_api" in names
     assert "secret_leak" in names
+    assert "sql_injection" in names
+    assert "path_traversal" in names
+    assert "exception_quality" in names
+    assert "mutable_defaults" in names
+    assert "compare_with_is" in names
+    assert "placeholder_check" in names
+    assert "performance" in names
+    assert "logging_quality" in names
+    assert "hardcoded_config" in names
     assert "ai_hallucination" in names
     assert "syntax_check" in names
     assert "ruff_blocker" in names

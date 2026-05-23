@@ -64,12 +64,50 @@ It understands the patterns, pitfalls, and security risks specific to code writt
 
 ## Features
 
-### 🔍 AI-Specific Detection (3 rules)
-| Rule | Severity | What It Finds |
-|------|----------|---------------|
-| `unsafe_api` | 🚫 BLOCKER | `eval()`, `exec()`, `os.system()`, `subprocess(shell=True)`, `pickle.loads()` |
-| `secret_leak` | 🚫 BLOCKER | Hardcoded API keys, tokens, passwords in source code |
-| `ai_hallucination` | ℹ️ INFO | AI placeholder comments, suspicious module names, giant auto-generated functions |
+### 🔍 AI-Specific Detection (17 rules)
+
+| Category | Rules | Severity |
+|----------|-------|----------|
+| **Security** | `unsafe_api`, `secret_leak`, `sql_injection`, `path_traversal` | 🚫 BLOCKER |
+| **Python Quality** | `bare_except`, `ruff_blocker`, `ruff_fixable`, `syntax_check`, `exception_quality`, `mutable_defaults`, `compare_with_is` | 🔧 FIXABLE |
+| **Code Smells** | `placeholder_check`, `ai_hallucination`, `performance`, `hardcoded_paths` | 🔧 FIXABLE |
+| **Config & Logging** | `hardcoded_config`, `logging_quality` | ℹ️ INFO |
+
+Each rule is a standalone Python class. Plug-in architecture: add a file, add a decorator.
+
+### ⭐ Quality Score (v6.0 NEW)
+After every scan, AgentGuard calculates a **0-100 quality score** across 5 dimensions:
+
+| Dimension | Weight | Measures |
+|-----------|:------:|----------|
+| Blocker Rate | 25% | Zero blockers = 100, 5+ = 0 |
+| Fix Rate | 25% | % of fixable issues actually fixed |
+| Coverage | 15% | Scan completeness |
+| Security | 20% | Safety issues found |
+| Trend | 15% | Improving or regressing? |
+
+Output: `🟢 Grade: A (Score: 97.6/100)`
+
+### 🛡️ Suppression System (v6.0 NEW)
+Silence false positives inline — works like SonarQube's `// NOSONAR`:
+
+```python
+eval(user_input)  # gate:ignore unsafe_api  # this is safe here
+os.system(cmd)    # gate:ignore-start unsafe_api
+# ... range of code to suppress ...
+                  # gate:ignore-end unsafe_api
+```
+
+### 🧪 Test Generation (v6.0 NEW)
+Automatically generates pytest skeletons for changed files:
+
+```python
+# From: src/parser.py → generates: tests/test_parser.py
+def test_parse():
+    """Test parse function"""
+    result = parse(mock_input=None)
+    assert result is not None
+```
 
 ### 📊 Agent Behavior Audit
 Reads agent trace data and produces a daily report:
@@ -147,7 +185,7 @@ Terminal recording of a realistic `gate run` session:
 ```text
 $ gate run
 2026-05-18 09:42:11,238 [INFO] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2026-05-18 09:42:11,238 [INFO]   质量门禁 v1.0.0 — 全量扫描
+2026-05-23 22:06:12,827 [INFO]   AgentGuard v6.0.0 — Full scan
 2026-05-18 09:42:11,238 [INFO] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 2026-05-18 09:42:11,271 [INFO] 📦 共 42 个 .py 文件
 2026-05-18 09:42:11,271 [INFO] 🆕 新增: 2  |  ✏️ 修改: 5  |  ✅ 稳定: 35
