@@ -54,7 +54,7 @@ EXCLUDE_DIRS = ["test", "tests", "__pycache__", ".git", "venv", ".venv", "node_m
 class SecretLeakRule(Rule):
     name = "secret_leak"
     severity = Severity.BLOCKER
-    description = "检测硬编码的API密钥/Token/密码"
+    description = "Detect hardcoded API keys/tokens/passwords"
 
     def should_check(self, filepath: str) -> bool:
         if not filepath.endswith(".py"):

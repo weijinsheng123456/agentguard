@@ -33,7 +33,7 @@ PLACEHOLDER_PATTERNS = [
 class PlaceholderCheckRule(Rule):
     name = "placeholder_check"
     severity = Severity.FIXABLE
-    description = "检测 TODO/FIXME/HACK 等占位注释残留"
+    description = "Detect TODO/FIXME/HACK placeholder comments"
 
     def should_check(self, filepath: str) -> bool:
         return filepath.endswith(".py")

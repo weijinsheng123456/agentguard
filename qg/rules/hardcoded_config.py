@@ -36,7 +36,7 @@ EXCLUDE_DIRS = ["test", "tests", "__pycache__", ".git", "venv", ".venv", "node_m
 class HardcodedConfigRule(Rule):
     name = "hardcoded_config"
     severity = Severity.INFO
-    description = "检测硬编码配置：URL/IP/路径等应配置化"
+    description = "Detect hardcoded config: URLs/IPs/paths should be configurable"
 
     def should_check(self, filepath: str) -> bool:
         if not filepath.endswith(".py"):

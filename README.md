@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/AgentGuard-1.0.0-8A2BE2?style=for-the-badge&logo=python&logoColor=white" width="300" alt="AgentGuard">
+  <img src="https://img.shields.io/badge/AgentGuard-6.0.0-8A2BE2?style=for-the-badge&logo=python&logoColor=white" width="300" alt="AgentGuard">
 </p>
 
 <p align="center">
@@ -34,7 +34,7 @@
     <img src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue?logo=python" alt="Python">
   </a>
   <a href="https://github.com/weijinsheng123456/agentguard/blob/main/CHANGELOG.md">
-    <img src="https://img.shields.io/badge/version-1.0.6-8A2BE2" alt="Version">
+    <img src="https://img.shields.io/badge/version-6.0.0-8A2BE2" alt="Version">
   </a>
 </p>
 

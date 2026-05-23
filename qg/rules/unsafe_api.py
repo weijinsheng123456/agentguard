@@ -40,7 +40,7 @@ EXCLUDE_DIRS = ["test", "tests", "__pycache__", ".git", "venv", ".venv", "node_m
 class UnsafeApiRule(Rule):
     name = "unsafe_api"
     severity = Severity.BLOCKER
-    description = "检测危险API调用：eval/exec/shell注入/反序列化"
+    description = "Detect dangerous API calls: eval/exec/shell injection/deserialization"
 
     def should_check(self, filepath: str) -> bool:
         if not filepath.endswith(".py"):

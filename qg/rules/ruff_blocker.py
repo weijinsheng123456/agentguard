@@ -15,7 +15,7 @@ from .base import BatchRule, register_rule
 class RuffBlockerRule(BatchRule):
     name = "ruff_blocker"
     severity = Severity.BLOCKER
-    description = "ruff 阻断级检查：F821(未定义变量) F541(无效f-string) E722(裸except)"
+    description = "ruff blocker rules: F821(undefined) F541(bad f-string) E722(bare except)"
 
     CODES = ["F821", "F541", "E722"]
 

@@ -33,10 +33,10 @@ def verify_fixes(fixed_files: list[tuple[str, str]]) -> dict:
     remaining = [i for i in issues if i.code in relevant_codes]
 
     if remaining:
-        logger.warning(f"复验发现 {len(remaining)} 个残留问题")
+        logger.warning(f"Verification: {len(remaining)} remaining issues")
         for i in remaining:
             logger.warning(f"  {i.short_path}:L{i.line} {i.code}")
         return {"passed": False, "remaining": remaining}
     else:
-        logger.info(f"✅ 所有修复已验证通过 ({len(filepaths)} 个文件)")
+        logger.info(f"✅ All fixes verified ({len(filepaths)} files)")
         return {"passed": True, "remaining": []}

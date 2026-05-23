@@ -43,7 +43,7 @@ SUSPICIOUS_MODULES = [
 class AiHallucinationRule(Rule):
     name = "ai_hallucination"
     severity = Severity.INFO
-    description = "检测AI生成的幻觉代码模式"
+    description = "Detect AI hallucination patterns: fake modules/URLs/placeholder code"
 
     def should_check(self, filepath: str) -> bool:
         return filepath.endswith(".py")

@@ -27,7 +27,7 @@ from .base import Rule, register_rule
 class LoggingQualityRule(Rule):
     name = "logging_quality"
     severity = Severity.INFO
-    description = "检测 print() 替代 logging 的情况"
+    description = "Detect print() used instead of logging"
 
     def should_check(self, filepath: str) -> bool:
         return filepath.endswith(".py") and "test" not in filepath

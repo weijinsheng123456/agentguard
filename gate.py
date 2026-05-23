@@ -61,7 +61,7 @@ def run_full_scan(config: dict) -> ScanResult:
     logger = logging.getLogger(__name__)
 
     logger.info("━" * 40)
-    logger.info(f"  质量门禁 v{VERSION} — 全量扫描")
+    logger.info(f"  AgentGuard v{VERSION} — Full scan")
     logger.info("━" * 40)
 
     # Phase 1: 扫描
@@ -71,14 +71,14 @@ def run_full_scan(config: dict) -> ScanResult:
     result.changed_files = scan_data["changed_files"]
     result.stable_files = scan_data["stable_files"]
 
-    logger.info(f"📦 共 {result.total_files} 个 .py 文件")
-    logger.info(f"🆕 新增: {len(result.new_files)}  |  ✏️ 修改: {len(result.changed_files)}  |  ✅ 稳定: {len(result.stable_files)}")
+    logger.info(f"📦 {result.total_files} .py files")
+    logger.info(f"🆕 New: {len(result.new_files)}  |  ✏️ Changed: {len(result.changed_files)}  |  ✅ Stable: {len(result.stable_files)}")
 
     unstable_files = result.new_files + result.changed_files
     scan_dir_paths = list(scan_data.get("scan_dirs", []))
 
     if not unstable_files:
-        logger.info("   ✅ 无新代码需要处理")
+        logger.info("   ✅ No changes to process")
     else:
         # Phase 2: 诊断（目录级+文件级）
         engine = Engine(config)
@@ -97,17 +97,17 @@ def run_full_scan(config: dict) -> ScanResult:
             if result.fixed_files:
                 verify_result = verify_fixes(result.fixed_files)
                 if not verify_result["passed"]:
-                    logger.warning(f"⚠️  复验发现 {len(verify_result['remaining'])} 个残留问题")
+                    logger.warning(f"⚠️  Verification: {len(verify_result['remaining'])} remaining issues")
 
             # Phase 5: 提交
             if result.fixed_files:
                 commit_result = auto_commit(result.fixed_files)
                 result.commit_count = commit_result["commit_count"]
         elif result.blocker_count > 0:
-            logger.warning("⚠️  有 BLOCKER 问题，跳过自动修复")
+            logger.warning("⚠️  BLOCKER issues found, skipping auto-fix")
 
     # 全量关键项扫描（BLOCKER 级别）
-    logger.info("🔍 全量关键项扫描...")
+    logger.info("🔍 Full scan for critical issues...")
     engine = Engine(config)
     all_issues = engine.diagnose_batch(scan_data["all_files"], scan_dir_paths)
     blocker_issues = [i for i in all_issues if i.severity == Severity.BLOCKER]
@@ -128,7 +128,7 @@ def run_full_scan(config: dict) -> ScanResult:
         score_line = scorer.summary_line(score_result)
         logger.info(f"📊 {score_line}")
     except Exception as e:
-        logger.warning(f"评分计算失败: {e}")
+        logger.warning(f"Score calculation failed: {e}")
         score_line = ""
 
     # 抑制过滤
@@ -137,12 +137,12 @@ def run_full_scan(config: dict) -> ScanResult:
         result.issues = filter_suppressed(result.issues)
         filtered = before - len(result.issues)
         if filtered > 0:
-            logger.info(f"🛡️ 抑制过滤: 移除了 {filtered} 个被 # gate:ignore 标记的问题")
+            logger.info(f"🛡️ Suppressed: {filtered} #gate:ignore issues")
     except Exception as e:
-        logger.warning(f"抑制过滤失败: {e}")
+        logger.warning(f"Suppression failed: {e}")
 
     # Agent审计
-    logger.info("📊 运行Agent行为审计...")
+    logger.info("📊 Running Agent behavior audit...")
     audit_report = audit_agent(days=7)
     result._audit = audit_report
 
@@ -157,12 +157,12 @@ def run_full_scan(config: dict) -> ScanResult:
             test_results = generate_batch(unstable_files)
             if test_results:
                 total = sum(r["test_count"] for r in test_results)
-                logger.info(f"🧪 自动生成 {total} 个测试 ({len(test_results)} 个文件)")
+                logger.info(f"🧪 Generated {total} tests ({len(test_results)} files)")
                 result._test_count = total
         except ImportError:
             pass  # testgen 模块不可用时跳过
         except Exception as e:
-            logger.warning(f"测试生成失败: {e}")
+            logger.warning(f"Test generation failed: {e}")
 
     # 报告
     report_lines = generate_report(result, score_line)
@@ -188,14 +188,14 @@ def run_quick_check(config: dict) -> bool:
         )
         staged_files = [f for f in result.stdout.strip().split("\n") if f.endswith(".py")]
     except subprocess.TimeoutExpired:
-        logger.error("git diff 超时")
+        logger.error("git diff timed out")
         return True
 
     if not staged_files:
-        logger.info("✅ 无Python文件变更")
+        logger.info("✅ No Python files changed")
         return True
 
-    logger.info(f"🔍 快速检查 {len(staged_files)} 个 staged Python 文件...")
+    logger.info(f"🔍 Quick check {len(staged_files)} staged Python files...")
 
     engine = Engine(config)
     has_errors = False
@@ -212,11 +212,11 @@ def run_quick_check(config: dict) -> bool:
             has_errors = True
 
     if has_errors:
-        logger.error("❌ 提交被阻止：有质量问题未修复")
-        logger.error("💡 运行 'gate run --fixme' 自动修复当前变更")
+        logger.error("❌ Commit blocked: quality issues remain")
+        logger.error("💡 Run 'gate run --fixme' to auto-fix staged changes")
         return False
 
-    logger.info("✅ 快速检查通过")
+    logger.info("✅ Quick check passed")
     return True
 
 
@@ -233,11 +233,11 @@ def run_fix_staged(config: dict) -> bool:
         )
         staged_files = [f for f in result.stdout.strip().split("\n") if f.endswith(".py") and Path(f).exists()]
     except subprocess.TimeoutExpired:
-        logger.error("git diff 超时")
+        logger.error("git diff timed out")
         return False
 
     if not staged_files:
-        logger.info("没有Python文件的变更需要修复")
+        logger.info("No Python file changes to fix")
         return True
 
     engine = Engine(config)
@@ -245,16 +245,16 @@ def run_fix_staged(config: dict) -> bool:
     fixables = [i for i in issues if i.severity == Severity.FIXABLE and i.fixable]
 
     if not fixables:
-        logger.info("✅ 无可自动修复项")
+        logger.info("✅ Nothing to auto-fix")
         return True
 
     fix_result = fix_issues(issues)
     if fix_result["fixed_count"] > 0:
         for fp, _ in fix_result["fixed_files"]:
             subprocess.run(["git", "add", fp], capture_output=True, timeout=10)
-        logger.info(f"✅ 已修复 {fix_result['fixed_count']} 处并重新staged")
+        logger.info(f"✅ Fixed {fix_result['fixed_count']} issues, re-staged")
     else:
-        logger.info("✅ 无可自动修复项")
+        logger.info("✅ Nothing to auto-fix")
 
     return True
 
@@ -263,7 +263,7 @@ def run_audit():
     """单独运行Agent行为审计"""
     setup_logging()
     logger = logging.getLogger(__name__)
-    logger.info("📊 运行Agent行为审计...")
+    logger.info("📊 Running Agent behavior audit...")
     report = audit_agent(days=7)
     lines = format_audit_report(report)
     for line in lines:
@@ -285,11 +285,11 @@ def install():
     logger = logging.getLogger(__name__)
     qg_dir = QG_DIR
 
-    logger.info("📁 创建目录结构...")
+    logger.info("📁 Creating directory structure...")
     for d in ["modules", "hooks", "lib", "backups"]:
         (qg_dir / d).mkdir(parents=True, exist_ok=True)
 
-    logger.info("🔐 设置执行权限...")
+    logger.info("🔐 Setting execute permissions...")
     gate_script = Path(__file__)
     gate_script.chmod(0o755)
 
@@ -316,7 +316,7 @@ def install():
     config = load_config()
     scan_data = scan_all(config)
     update_manifest(scan_data["all_files"])
-    logger.info(f"  ✅ 已记录 {len(scan_data['all_files'])} 个文件")
+    logger.info(f"  ✅ Recorded {len(scan_data['all_files'])} files")
 
     logger.info("✅ Installation complete!")
     logger.info("Usage:")
@@ -338,7 +338,7 @@ def main():
     args = parser.parse_args()
 
     if args.command == "version":
-        print(f"Hermes 质量门禁 v{VERSION}")
+        print(f"AgentGuard v{VERSION}")
         return
 
     if args.command == "install":

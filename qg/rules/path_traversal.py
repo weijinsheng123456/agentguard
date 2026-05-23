@@ -45,7 +45,7 @@ SAFE_BASE_PATTERNS = [
 class PathTraversalRule(Rule):
     name = "path_traversal"
     severity = Severity.BLOCKER
-    description = "检测路径遍历风险：未验证的用户输入拼接路径"
+    description = "Detect path traversal: unvalidated user input in file paths"
 
     def should_check(self, filepath: str) -> bool:
         if not filepath.endswith(".py"):

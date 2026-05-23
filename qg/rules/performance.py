@@ -33,7 +33,7 @@ EXCLUDE_DIRS = ["test", "tests", "__pycache__", ".git", "venv", ".venv", "node_m
 class PerformanceRule(Rule):
     name = "performance"
     severity = Severity.FIXABLE
-    description = "检测性能隐患：循环内调API/可转list推导的for/不必要的全局写"
+    description = "Detect performance issues: API calls in loops, for→list comprehension"
 
     def should_check(self, filepath: str) -> bool:
         if not filepath.endswith(".py"):

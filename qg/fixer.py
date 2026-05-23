@@ -95,7 +95,7 @@ def fix_issues(issues: list[Issue]) -> dict:
                         if rule.fix(filepath, issue):
                             file_fixed += 1
                     except Exception as e:
-                        logger.warning(f"修复 {filepath}:L{issue.line} 失败: {e}")
+                        logger.warning(f"Fix {filepath}:L{issue.line} failed: {e}")
 
         # 验证语法
         if file_fixed > 0:
@@ -113,7 +113,7 @@ def fix_issues(issues: list[Issue]) -> dict:
                 if backup:
                     restore_file(backup, filepath)
                 failed_files.append(filepath)
-                logger.warning(f"❌ 修复导致语法错误，已回滚: {filepath}")
+                logger.warning(f"❌ Fix caused syntax error, rolled back: {filepath}")
         else:
             # 没变化，不用管
             pass

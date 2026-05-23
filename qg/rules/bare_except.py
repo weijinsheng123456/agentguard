@@ -10,7 +10,7 @@ from ..models import Issue, Severity
 class BareExceptRule(Rule):
     name = "bare_except"
     severity = Severity.FIXABLE
-    description = "裸 except（无异常类型）→ except Exception"
+    description = "Bare except (no exception type) → except Exception"
 
     def diagnose(self, filepath: str) -> list[Issue]:
         issues = []

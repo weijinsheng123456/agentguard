@@ -33,7 +33,7 @@ class Engine:
                 self.batch_rules.append(instance)
             else:
                 self.file_rules.append(instance)
-        logger.info(f"引擎加载 {len(all_rule_classes)} 条规则: "
+        logger.info(f"Engine loaded {len(all_rule_classes)} rules: "
                      f"({len(self.file_rules)} 文件级 + {len(self.batch_rules)} 目录级)")
 
     def diagnose_batch(self, files: list[str], scan_dirs: Optional[list[str]] = None) -> list[Issue]:
@@ -52,9 +52,9 @@ class Engine:
                     found = rule.diagnose_batch(scan_dirs)
                     dir_issues.extend(found)
                 except Exception as e:
-                    logger.warning(f"目录级规则 {rule.name} 异常: {e}")
+                    logger.warning(f"Batch rule {rule.name} error: {e}")
             all_issues.extend(dir_issues)
-            logger.info(f"  目录级规则: {len(dir_issues)} 个问题")
+            logger.info(f"  Batch rules: {len(dir_issues)} issues")
 
         # Phase 2: 文件级规则（逐文件，慢）
         if files and self.file_rules:
@@ -66,9 +66,9 @@ class Engine:
                             found = rule.diagnose(f)
                             file_issues.extend(found)
                     except Exception as e:
-                        logger.warning(f"规则 {rule.name} 检查 {f} 异常: {e}")
+                        logger.warning(f"Rule {rule.name} on {f} error: {e}")
             all_issues.extend(file_issues)
-            logger.info(f"  文件级规则: {len(file_issues)} 个问题")
+            logger.info(f"  File rules: {len(file_issues)} issues")
 
         return all_issues
 

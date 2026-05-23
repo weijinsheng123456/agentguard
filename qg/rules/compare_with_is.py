@@ -23,7 +23,7 @@ from .base import Rule, register_rule
 class CompareWithIsRule(Rule):
     name = "compare_with_is"
     severity = Severity.FIXABLE
-    description = "检测用 is 比较字符串/数字字面量，应使用 =="
+    description = "Detect `is` comparison on string/number literals, use =="
 
     def should_check(self, filepath: str) -> bool:
         return filepath.endswith(".py")

@@ -11,7 +11,7 @@ from ..models import Issue, Severity
 class HardcodedPathsRule(Rule):
     name = "hardcoded_paths"
     severity = Severity.FIXABLE
-    description = "硬编码的 /home/*/ 路径 → $HOME"
+    description = "Hardcoded /home/*/ paths → use $HOME"
 
     # 排除文件
     EXCLUDE_PATTERNS = ["test_integration"]

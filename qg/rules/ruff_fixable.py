@@ -15,7 +15,7 @@ from .base import BatchRule, register_rule
 class RuffFixableRule(BatchRule):
     name = "ruff_fixable"
     severity = Severity.FIXABLE
-    description = "ruff 可自动修复项：F401/F841/E711/E712"
+    description = "ruff auto-fixable: F401(unused import) F841/E711/E712"
 
     CODES = ["F401", "F841", "E711", "E712"]
 

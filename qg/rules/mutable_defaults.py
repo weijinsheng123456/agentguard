@@ -25,7 +25,7 @@ from .base import Rule, register_rule
 class MutableDefaultsRule(Rule):
     name = "mutable_defaults"
     severity = Severity.FIXABLE
-    description = "检测可变默认参数：def foo(a=[]) → 应改为 None+体内初始化"
+    description = "Detect mutable default args: def foo(a=[]) → None + body init"
 
     def should_check(self, filepath: str) -> bool:
         return filepath.endswith(".py") and "test" not in filepath

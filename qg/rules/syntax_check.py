@@ -11,7 +11,7 @@ from .base import Rule, register_rule
 class SyntaxCheckRule(Rule):
     name = "syntax_check"
     severity = Severity.BLOCKER
-    description = "Python 语法检查（py_compile）"
+    description = "Python syntax check via py_compile"
 
     def diagnose(self, filepath: str) -> list[Issue]:
         try:

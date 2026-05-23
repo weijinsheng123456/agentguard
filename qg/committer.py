@@ -42,7 +42,7 @@ def auto_commit(fixed_files: list[tuple[str, str]]) -> dict:
         if repo:
             repo_files[repo].append((fp, desc))
         else:
-            logger.info(f"  ℹ️  不在git仓库中，跳过: {fp}")
+            logger.info(f"  ℹ️  Not in git repo, skipping: {fp}")
 
     details = []
     commit_count = 0
@@ -68,7 +68,7 @@ def auto_commit(fixed_files: list[tuple[str, str]]) -> dict:
                 cwd=repo, capture_output=True, text=True, timeout=10,
             )
             if not status.stdout.strip():
-                logger.info(f"  ✅ {repo_name}: 无变更需要提交")
+                logger.info(f"  ✅ {repo_name}: nothing to commit")
                 details.append(f"{repo_name}: 无变更")
                 continue
         except subprocess.TimeoutExpired:
@@ -89,13 +89,13 @@ def auto_commit(fixed_files: list[tuple[str, str]]) -> dict:
             )
             if result.returncode == 0:
                 commit_count += 1
-                logger.info(f"  ✅ {repo_name}: 已自动提交")
+                logger.info(f"  ✅ {repo_name}: auto-committed")
                 details.append(f"{repo_name}: ✅ 已提交")
             else:
-                logger.warning(f"  ⚠️  提交失败 {repo_name}: {result.stderr[:100]}")
+                logger.warning(f"  ⚠️  Commit failed {repo_name}: {result.stderr[:100]}")
                 details.append(f"{repo_name}: ❌ {result.stderr[:50]}")
         except subprocess.TimeoutExpired:
-            logger.warning(f"  ⚠️  提交超时 {repo_name}")
+            logger.warning(f"  ⚠️  Commit timed out {repo_name}")
             details.append(f"{repo_name}: ⏰ 超时")
 
     return {"commit_count": commit_count, "details": details}

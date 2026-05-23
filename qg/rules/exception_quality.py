@@ -24,7 +24,7 @@ from .base import Rule, register_rule
 class ExceptionQualityRule(Rule):
     name = "exception_quality"
     severity = Severity.FIXABLE
-    description = "检测异常处理质量问题：裸except/空except/过于宽泛"
+    description = "Detect exception quality issues: bare/empty/overly broad except"
 
     def should_check(self, filepath: str) -> bool:
         return filepath.endswith(".py") and "test" not in filepath

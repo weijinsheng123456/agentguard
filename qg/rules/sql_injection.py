@@ -33,7 +33,7 @@ EXCLUDE_DIRS = ["test", "tests", "__pycache__", ".git", "venv", ".venv", "node_m
 class SqlInjectionRule(Rule):
     name = "sql_injection"
     severity = Severity.BLOCKER
-    description = "检测SQL注入风险：f-string/format拼接SQL"
+    description = "Detect SQL injection: f-string/format concatenated queries"
 
     def should_check(self, filepath: str) -> bool:
         if not filepath.endswith(".py"):
