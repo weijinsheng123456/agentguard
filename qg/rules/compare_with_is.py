@@ -67,7 +67,7 @@ class CompareWithIsRule(Rule):
                             filepath=filepath,
                             line=node.lineno,
                             code="IS_COMPARE",
-                            message=f"用 is 比较 {type(right.value).__name__} 字面量: 应使用 == 而非 is",
+                            message=f"Use == instead of is for {type(right.value).__name__} literal",
                             severity=Severity.FIXABLE,
                             rule_name=self.name,
                             fixable=True,

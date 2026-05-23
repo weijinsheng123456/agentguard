@@ -23,7 +23,7 @@ class BareExceptRule(Rule):
                         filepath=filepath,
                         line=node.lineno,
                         code="E722",
-                        message="裸 except（应指定异常类型）",
+                        message="Bare except (specify exception type)",
                         severity=Severity.FIXABLE,
                         rule_name=self.name,
                         fixable=True,

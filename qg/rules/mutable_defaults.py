@@ -84,7 +84,7 @@ class MutableDefaultsRule(Rule):
                             filepath=filepath,
                             line=node.lineno,
                             code="MUTABLE_DEFAULT",
-                            message=f"可变默认参数 '{param_name}={type_str}()': 应改为 None + 函数体内初始化",
+                            message=f"Mutable default '{param_name}={type_str}()': use None + body init",
                             severity=Severity.FIXABLE,
                             rule_name=self.name,
                             fixable=True,

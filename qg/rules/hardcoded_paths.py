@@ -32,7 +32,7 @@ class HardcodedPathsRule(Rule):
                         filepath=filepath,
                         line=i,
                         code="HARDCODE",
-                        message="硬编码路径（应使用 $HOME 或 os.path.expanduser）",
+                        message="Hardcoded path (use $HOME or os.path.expanduser)",
                         severity=Severity.FIXABLE,
                         rule_name=self.name,
                         fixable=True,

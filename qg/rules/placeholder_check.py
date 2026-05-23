@@ -61,7 +61,7 @@ class PlaceholderCheckRule(Rule):
                         filepath=filepath,
                         line=i,
                         code="PLACEHOLDER_TODO",
-                        message=f"占位注释: {desc} — \"{stripped[:60].strip()}\"",
+                        message=f"Placeholder comment: {desc} — \"{stripped[:60].strip()}\"",
                         severity=Severity.FIXABLE,
                         rule_name=self.name,
                         fixable=False,
