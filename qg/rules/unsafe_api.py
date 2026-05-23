@@ -71,6 +71,9 @@ class UnsafeApiRule(Rule):
                     func_name = func.id
                     for mod_path, name, code, desc in DANGEROUS_CALLS:
                         if not mod_path and func_name == name:
+                            # __import__ 带硬编码字符串参数（如 __import__("modal")）是安全的包存在性检查
+                            if name == "__import__" and node.args and isinstance(node.args[0], ast.Constant) and isinstance(node.args[0].value, str):
+                                continue
                             issues.append(Issue(
                                 filepath=filepath,
                                 line=node.lineno,

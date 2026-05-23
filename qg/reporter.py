@@ -8,13 +8,13 @@ from __future__ import annotations
 import logging
 from datetime import datetime
 
-from .config import load_config, get_log_path
+from .config import HERMES_HOME
 from .models import ScanResult
 
 logger = logging.getLogger(__name__)
 
 
-def generate_report(result: ScanResult) -> list[str]:
+def generate_report(result: ScanResult, score_line: str = "") -> list[str]:
     """生成结构化的质量门禁报告。
 
     Returns:
@@ -22,6 +22,10 @@ def generate_report(result: ScanResult) -> list[str]:
     """
     date_str = datetime.now().strftime("%m/%d")
     lines: list[str] = []
+
+    if score_line:
+        lines.append(score_line)
+        lines.append("")
 
     if result.total_issues == 0 and result.fixed_count == 0:
         lines.append(f"━━━ ✅ 质量门禁 {date_str} ━━━")
@@ -54,11 +58,11 @@ def generate_report(result: ScanResult) -> list[str]:
 
 def write_log(report_lines: list[str]):
     """写入日志文件"""
-    config = load_config()
-    log_path = get_log_path(config)
-    log_path.parent.mkdir(parents=True, exist_ok=True)
+    log_dir = HERMES_HOME / "logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / "quality-gate.log"
 
-    with open(log_path, "a") as f:
+    with open(log_file, "a") as f:
         f.write("\n")
         f.write("━" * 40 + "\n")
         f.write(f"[{datetime.now().isoformat()}]\n")

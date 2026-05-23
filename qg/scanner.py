@@ -15,11 +15,9 @@ import subprocess
 from pathlib import Path
 from typing import Optional
 
-from .config import QG_HOME, HERMES_HOME, ignored_path, load_config, resolve_scan_dirs
+from .config import HERMES_HOME, ignored_path, load_config, resolve_scan_dirs
 
-# 优先使用 QG_HOME（独立部署），兼容 HERMES_HOME（Hermes 环境）
-MANIFEST_DIR = QG_HOME if QG_HOME.exists() else HERMES_HOME
-MANIFEST_FILE = MANIFEST_DIR / "data" / "file-manifest.json"
+MANIFEST_FILE = HERMES_HOME / "data" / "file-manifest.json"
 
 
 def compute_file_hash(filepath: Path) -> str:
@@ -45,6 +43,7 @@ def _find_py_files(directory: Path) -> list[str]:
              "-not", "-path", "*/backups/*",
              "-not", "-path", "*/study_projects/*",
              "-not", "-path", "*/wasm-preview/*",
+             "-not", "-path", "*/archive/*",
              "-type", "f"],
             capture_output=True, text=True, timeout=30,
         )
@@ -116,7 +115,7 @@ def scan_all(config: Optional[dict] = None) -> dict:
 
 def update_manifest(all_files: list[str]):
     """更新文件清单 manifest"""
-    MANIFEST_DIR.joinpath("data").mkdir(parents=True, exist_ok=True)
+    HERMES_HOME.joinpath("data").mkdir(parents=True, exist_ok=True)
     manifest = {}
     for f in all_files:
         manifest[f] = compute_file_hash(Path(f))

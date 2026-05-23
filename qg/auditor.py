@@ -10,7 +10,6 @@
 from __future__ import annotations
 
 import logging
-import os
 import sqlite3
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -18,9 +17,7 @@ from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-DB_PATH = Path(
-    os.environ.get("QG_TRACE_DB", os.environ.get("HERMES_HOME", Path.home() / ".hermes"))
-) / "state.db"
+DB_PATH = Path.home() / ".hermes" / "state.db"
 
 
 def _get_conn() -> Optional[sqlite3.Connection]:

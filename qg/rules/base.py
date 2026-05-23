@@ -63,7 +63,7 @@ def register_rule(rule_cls: type):
     if name in _RULES:
         raise ValueError(f"Rule '{name}' already registered")
     _RULES[name] = rule_cls
-    return rule_cls  # 保持装饰器可链式调用
+    return rule_cls  # keep decorator chainable
 
 
 def get_all_rules() -> list[type]:

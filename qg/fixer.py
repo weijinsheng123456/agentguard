@@ -71,6 +71,7 @@ def fix_issues(issues: list[Issue]) -> dict:
 
         # 备份
         backup = backup_file(filepath)
+        before_hash = hashlib.md5(src.read_bytes()).hexdigest()
         file_fixed = 0
 
         # 按规则分组修复

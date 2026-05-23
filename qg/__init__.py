@@ -1,1 +1,1 @@
-"""qg 包 — AgentGuard: AI-native quality gate for agent-generated code"""
+"""qg 包 — Hermes 质量门禁 v5"""

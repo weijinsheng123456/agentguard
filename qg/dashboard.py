@@ -7,16 +7,13 @@
 from __future__ import annotations
 
 import logging
-import os
 import sqlite3
 from datetime import datetime
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-DB_PATH = Path(
-    os.environ.get("QG_HOME", Path.home() / ".config" / "agentguard")
-) / "trends.db"
+DB_PATH = Path.home() / ".hermes" / "quality-gate" / "trends.db"
 
 
 def _get_conn() -> sqlite3.Connection:
@@ -37,14 +34,21 @@ def _get_conn() -> sqlite3.Connection:
             info_count INTEGER DEFAULT 0,
             fixed_count INTEGER DEFAULT 0,
             commit_count INTEGER DEFAULT 0,
+            quality_score REAL DEFAULT NULL,
             timestamp TEXT DEFAULT (datetime('now'))
         )
     """)
+    # 兼容旧表：添加新列（如果不存在）
+    try:
+        conn.execute("ALTER TABLE daily_metrics ADD COLUMN quality_score REAL DEFAULT NULL")
+    except sqlite3.OperationalError:
+        pass  # 列已存在
+    conn.commit()
     conn.commit()
     return conn
 
 
-def save_metrics(result) -> None:
+def save_metrics(result, quality_score: float | None = None) -> None:
     """保存一次扫描结果到历史表"""
     conn = _get_conn()
     date_str = datetime.now().strftime("%Y-%m-%d")
@@ -53,8 +57,8 @@ def save_metrics(result) -> None:
         INSERT OR REPLACE INTO daily_metrics
             (date, total_files, new_files, changed_files, stable_files,
              total_issues, blocker_count, fixable_count, info_count,
-             fixed_count, commit_count)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             fixed_count, commit_count, quality_score)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
         date_str,
         result.total_files,
@@ -67,6 +71,7 @@ def save_metrics(result) -> None:
         result.info_count,
         result.fixed_count,
         result.commit_count,
+        quality_score,
     ))
     conn.commit()
     conn.close()
@@ -130,8 +135,16 @@ def format_trend_chart(trend_data: list[dict]) -> list[str]:
 
     # 汇总
     avg_issues = sum(r.get("total_issues", 0) for r in trend_data) / len(trend_data)
+    avg_score = sum(r.get("quality_score", 0) or 0 for r in trend_data) / len(trend_data)
     lines.append("")
-    lines.append(f"日均问题数: {avg_issues:.1f}")
+    lines.append(f"日均问题数: {avg_issues:.1f}  |  平均评分: {avg_score:.1f}/100")
     lines.append(f"健康天数: {sum(1 for r in trend_data if r.get('total_issues', 0) == 0)}/{len(trend_data)}")
+
+    # 评分趋势
+    scores = [r.get("quality_score") for r in trend_data if r.get("quality_score") is not None]
+    if len(scores) >= 2:
+        delta = scores[-1] - scores[0]
+        trend = "↗️" if delta > 1 else ("↘️" if delta < -1 else "→")
+        lines.append(f"评分趋势: {scores[0]:.0f} → {scores[-1]:.0f} {trend} ({delta:+.1f})")
 
     return lines

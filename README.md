@@ -21,8 +21,8 @@
   <a href="https://github.com/weijinsheng123456/agentguard/actions">
     <img src="https://img.shields.io/github/actions/workflow/status/weijinsheng123456/agentguard/ci.yml?branch=main&label=CI&logo=github&color=success" alt="CI">
   </a>
-  <a href="https://pypi.org/project/agentguard/">
-    <img src="https://img.shields.io/pypi/v/agentguard?label=PyPI&logo=pypi&color=blue" alt="PyPI">
+  <a href="https://pypi.org/project/agentguard-tool/">
+    <img src="https://img.shields.io/pypi/v/agentguard-tool?label=PyPI&logo=pypi&color=blue" alt="PyPI">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
@@ -34,7 +34,7 @@
     <img src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue?logo=python" alt="Python">
   </a>
   <a href="https://github.com/weijinsheng123456/agentguard/blob/main/CHANGELOG.md">
-    <img src="https://img.shields.io/badge/version-1.0.0-8A2BE2" alt="Version">
+    <img src="https://img.shields.io/badge/version-1.0.6-8A2BE2" alt="Version">
   </a>
 </p>
 

@@ -15,9 +15,9 @@ from .base import BatchRule, register_rule
 class RuffBlockerRule(BatchRule):
     name = "ruff_blocker"
     severity = Severity.BLOCKER
-    description = "ruff 阻断级检查：F821(未定义变量) E999(语法错误)"
+    description = "ruff 阻断级检查：F821(未定义变量) F541(无效f-string) E722(裸except)"
 
-    CODES = ["F821", "E999"]
+    CODES = ["F821", "F541", "E722"]
 
     def _run_ruff(self, target: str) -> list[Issue]:
         """对单个目标运行 ruff，返回问题列表"""

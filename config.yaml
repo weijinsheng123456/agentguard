@@ -20,6 +20,10 @@ ignore_patterns:
   - "*/backups/*"
   - "*/study_projects/*"       # 第三方学习代码，不归我们管
   - "*/wasm-preview/*"         # WebAssembly 测试代码
+  - "*/tests/*"                # 测试代码（允许危险API用于测试）
+  - "*/archive/*"             # 归档脚本（已废弃，不维护）
+  - "*/plugins/*"             # Hermes插件系统（动态导入必须用__import__）
+  - "*/wasm/*"                # WebAssembly构建产物
 
 # 严重度配置
 severity:

@@ -14,7 +14,7 @@ class HardcodedPathsRule(Rule):
     description = "硬编码的 /home/*/ 路径 → $HOME"
 
     # 排除文件
-    EXCLUDE_PATTERNS = ["test_integration", "test_rules", "hardcoded_paths"]
+    EXCLUDE_PATTERNS = ["test_integration"]
 
     def diagnose(self, filepath: str) -> list[Issue]:
         issues = []
