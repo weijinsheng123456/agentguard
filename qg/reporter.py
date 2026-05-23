@@ -15,10 +15,10 @@ logger = logging.getLogger(__name__)
 
 
 def generate_report(result: ScanResult, score_line: str = "") -> list[str]:
-    """生成结构化的质量门禁报告。
+    """Generate a structured quality gate report.
 
     Returns:
-        报告行列表（适合微信/日志输出）
+        Report lines (suitable for console/log output)
     """
     date_str = datetime.now().strftime("%m/%d")
     lines: list[str] = []
@@ -28,36 +28,36 @@ def generate_report(result: ScanResult, score_line: str = "") -> list[str]:
         lines.append("")
 
     if result.total_issues == 0 and result.fixed_count == 0:
-        lines.append(f"━━━ ✅ 质量门禁 {date_str} ━━━")
-        lines.append(f"扫描: {result.total_files} 个文件")
-        lines.append("结果: 全部通过，零问题")
+        lines.append(f"━━━ ✅ Quality Gate {date_str} ━━━")
+        lines.append(f"Scanned: {result.total_files} files")
+        lines.append("Result: All clear, zero issues")
     elif result.total_issues == 0 and result.fixed_count > 0:
-        lines.append(f"━━━ ✅ 质量门禁 {date_str} ━━━")
-        lines.append(f"扫描: {result.total_files} 个文件（+{len(result.new_files)}/~{len(result.changed_files)}）")
-        lines.append(f"修复: {result.fixed_count} 处自动修复 ✅")
+        lines.append(f"━━━ ✅ Quality Gate {date_str} ━━━")
+        lines.append(f"Scanned: {result.total_files} files (+{len(result.new_files)}/~{len(result.changed_files)})")
+        lines.append(f"Fixed: {result.fixed_count} auto-fixes ✅")
         if result.commit_count > 0:
-            lines.append(f"提交: {result.commit_count} 个仓库已自动提交 ✅")
+            lines.append(f"Committed: {result.commit_count} repos ✅")
     else:
-        lines.append(f"━━━ ⚠️ 质量门禁 {date_str} ━━━")
-        lines.append(f"扫描: {result.total_files} 个文件（+{len(result.new_files)}/~{len(result.changed_files)}）")
+        lines.append(f"━━━ ⚠️ Quality Gate {date_str} ━━━")
+        lines.append(f"Scanned: {result.total_files} files (+{len(result.new_files)}/~{len(result.changed_files)})")
 
         if result.blocker_count > 0:
-            lines.append(f"阻塞: {result.blocker_count} 项 ❌ 需人工")
+            lines.append(f"Blockers: {result.blocker_count} ❌ manual review needed")
             for i in result.blockers[:3]:
                 lines.append(f"  ❌ {i.short_path}:L{i.line}  {i.code}")
             if result.blocker_count > 3:
-                lines.append(f"  ...及 {result.blocker_count - 3} 项")
+                lines.append(f"  ...and {result.blocker_count - 3} more")
 
         if result.fixed_count > 0:
-            lines.append(f"修复: {result.fixed_count} 处 ✅")
+            lines.append(f"Fixed: {result.fixed_count} ✅")
         if result.commit_count > 0:
-            lines.append(f"提交: {result.commit_count} 个仓库 ✅")
+            lines.append(f"Committed: {result.commit_count} repos ✅")
 
     return lines
 
 
 def write_log(report_lines: list[str]):
-    """写入日志文件"""
+    """Write report to log file"""
     log_dir = HERMES_HOME / "logs"
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "quality-gate.log"
@@ -72,6 +72,5 @@ def write_log(report_lines: list[str]):
 
 
 def format_wechat(report_lines: list[str]) -> str:
-    """转换为微信消息格式（浓缩版）"""
-    # 直接返回报告行，已经很紧凑了
+    """Convert to WeChat message format (compact)"""
     return "\n".join(report_lines)

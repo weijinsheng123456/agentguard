@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Hermes 质量门禁 v5 — CLI 主入口
+"""AgentGuard v6 — CLI entry point
 
-用法:
-    gate run                 完整扫描+修复+提交+审计
-    gate run --quick         Pre-commit快速检查
-    gate run --fixme         修复当前staged文件
-    gate audit               单独运行Agent行为审计
-    gate trend [天数]        查看质量趋势仪表盘
-    gate install             初始化安装
-    gate version             版本信息
+Usage:
+    gate run                 Full scan + fix + commit + audit
+    gate run --quick         Pre-commit quick check (staged files only)
+    gate run --fixme         Fix currently staged files
+    gate audit               Run Agent behavior audit
+    gate trend [days]        View quality trend dashboard
+    gate install             Initialize installation
+    gate version             Version info
 """
 
 from __future__ import annotations
@@ -318,22 +318,22 @@ def install():
     update_manifest(scan_data["all_files"])
     logger.info(f"  ✅ 已记录 {len(scan_data['all_files'])} 个文件")
 
-    logger.info("✅ 安装完成！")
-    logger.info("用法:")
-    logger.info("  gate run             完整扫描+修复+提交+审计")
-    logger.info("  gate run --quick     快速检查")
-    logger.info("  gate run --fixme     修复当前变更")
-    logger.info("  gate audit           单独审计")
-    logger.info("  gate trend [天数]    趋势仪表盘")
+    logger.info("✅ Installation complete!")
+    logger.info("Usage:")
+    logger.info("  gate run             Full scan + fix + commit + audit")
+    logger.info("  gate run --quick     Quick check staged files")
+    logger.info("  gate run --fixme     Auto-fix staged files")
+    logger.info("  gate audit           Agent behavior audit only")
+    logger.info("  gate trend [days]    View trend dashboard")
 
 
 def main():
-    parser = argparse.ArgumentParser(description=f"Hermes 质量门禁 v{VERSION}")
+    parser = argparse.ArgumentParser(description=f"AgentGuard v{VERSION} — AI-native quality gate")
     parser.add_argument("command", nargs="?", default="run",
-                        help="命令: run/install/version/audit/trend (default: run)")
-    parser.add_argument("--quick", action="store_true", help="快速检查 staged 文件")
-    parser.add_argument("--fixme", action="store_true", help="修复当前 staged 文件")
-    parser.add_argument("--full", action="store_true", help="强制全量扫描")
+                        help="Command: run/install/version/audit/trend (default: run)")
+    parser.add_argument("--quick", action="store_true", help="Quick check staged files only")
+    parser.add_argument("--fixme", action="store_true", help="Auto-fix staged files")
+    parser.add_argument("--full", action="store_true", help="Force full scan (ignore manifest cache)")
 
     args = parser.parse_args()
 

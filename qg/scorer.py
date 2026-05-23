@@ -167,7 +167,7 @@ class ScoreCalculator:
         }.get(grade, "⚪")
 
     def summary_line(self, result: ScoreResult) -> str:
-        """生成一行摘要"""
+        """Generate one-line summary"""
         emoji = self.score_emoji(result.grade)
         trend = ""
         if result.score_delta is not None:
@@ -176,9 +176,9 @@ class ScoreCalculator:
             elif result.score_delta < 0:
                 trend = f" ↓{result.score_delta:.1f}"
         return (
-            f"{emoji} 质量评级: {result.grade} (Score: {result.score:.1f}/100){trend}\n"
-            f"  阻断项: {int(result.breakdown['blockers'])} | "
-            f"可修复: {int(result.breakdown['fixables'])} | "
-            f"安全问题: {int(result.breakdown['safety_issues'])} | "
-            f"总量: {int(result.breakdown['total_issues'])}"
+            f"{emoji} Grade: {result.grade} (Score: {result.score:.1f}/100){trend}\n"
+            f"  Blockers: {int(result.breakdown['blockers'])} | "
+            f"Fixable: {int(result.breakdown['fixables'])} | "
+            f"Security: {int(result.breakdown['safety_issues'])} | "
+            f"Total: {int(result.breakdown['total_issues'])}"
         )
