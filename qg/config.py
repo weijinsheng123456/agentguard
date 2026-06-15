@@ -17,9 +17,7 @@ def load_config() -> dict[str, Any]:
     config_path = QG_HOME / "config.yaml"
     defaults = {
         "scan_dirs": [
-            "~/.hermes/scripts",
-            "~/.hermes/skills",
-            "~/.hermes/content-toolkit",
+            ".",  # Default: scan current directory
         ],
         "ignore_patterns": [
             "*__pycache__*",
@@ -29,9 +27,8 @@ def load_config() -> dict[str, Any]:
             "*/venv/*",
             "*/.venv/*",
             "*/backups/*",
-            "*/study_projects/*",
-            "*/wasm-preview/*",
-            "*/archive/*",
+            "*/dist/*",
+            "*/build/*",
         ],
         "severity": {
             "blocker_codes": ["F821", "E999", "SYNTAX"],
@@ -39,7 +36,7 @@ def load_config() -> dict[str, Any]:
             "info_codes": ["E501", "W"],
         },
         "report": {
-            "to_wechat": True,
+            "to_wechat": False,
             "max_summary_lines": 8,
         },
         "log": {

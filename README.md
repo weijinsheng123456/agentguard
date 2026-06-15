@@ -252,6 +252,7 @@ $ gate trend
 | `gate run` | Full scan + auto-fix + commit + audit |
 | `gate run --quick` | Pre-commit check (staged files only) |
 | `gate run --fixme` | Auto-fix staged files |
+| `gate check <file...>` | Quick check specific files (no git needed) |
 | `gate audit` | Agent behavior audit only |
 | `gate trend [N]` | Show last N days of quality trends |
 | `gate install` | Install pre-commit hooks & cron |
