@@ -175,6 +175,68 @@ def run_full_scan(config: dict) -> ScanResult:
     return result
 
 
+def run_check_file(config: dict, filepaths: list[str]) -> dict:
+    """Check specific files and return structured results.
+    
+    Returns:
+        dict with keys: passed (bool), total_issues (int), blocker_count (int),
+                        issues (list[dict]), summary (str)
+    """
+    import json
+    from qg.suppress import filter_suppressed
+    
+    logger = logging.getLogger(__name__)
+    engine = Engine(config)
+    all_issues = []
+    
+    for fp in filepaths:
+        if not fp.endswith(".py") or not Path(fp).exists():
+            continue
+        issues = engine.diagnose_file(fp)
+        all_issues.extend(issues)
+    
+    # Apply suppression
+    all_issues = filter_suppressed(all_issues)
+    
+    # Build result
+    blockers = [i for i in all_issues if i.severity == Severity.BLOCKER]
+    fixables = [i for i in all_issues if i.severity == Severity.FIXABLE]
+    infos = [i for i in all_issues if i.severity == Severity.INFO]
+    
+    summary_parts = []
+    if blockers:
+        summary_parts.append(f"{len(blockers)} blocker(s)")
+    if fixables:
+        summary_parts.append(f"{len(fixables)} fixable(s)")
+    if infos:
+        summary_parts.append(f"{len(infos)} info(s)")
+    
+    if not summary_parts:
+        summary = "✅ Clean"
+    else:
+        summary = "⚠️  " + ", ".join(summary_parts)
+    
+    return {
+        "passed": len(blockers) == 0,
+        "total_issues": len(all_issues),
+        "blocker_count": len(blockers),
+        "fixable_count": len(fixables),
+        "info_count": len(infos),
+        "issues": [
+            {
+                "filepath": i.filepath,
+                "line": i.line,
+                "code": i.code,
+                "message": i.message,
+                "severity": i.severity.value,
+                "rule": i.rule_name,
+            }
+            for i in all_issues
+        ],
+        "summary": summary,
+    }
+
+
 def run_quick_check(config: dict) -> bool:
     """Quick check (for pre-commit hook)"""
     import subprocess
@@ -327,17 +389,29 @@ def install():
     logger.info("  gate trend [days]    View trend dashboard")
 
 
-def main():
+def  main():
     parser = argparse.ArgumentParser(description=f"AgentGuard v{VERSION} — AI-native quality gate")
-    parser.add_argument("command", nargs="?", default="run",
-                        help="Command: run/install/version/audit/trend (default: run)")
-    parser.add_argument("--quick", action="store_true", help="Quick check staged files only")
-    parser.add_argument("--fixme", action="store_true", help="Auto-fix staged files")
-    parser.add_argument("--full", action="store_true", help="Force full scan (ignore manifest cache)")
+    subparsers = parser.add_subparsers(dest="command", help="Command to run")
+    
+    # run (default)
+    run_parser = subparsers.add_parser("run", help="Full scan + fix + commit + audit")
+    run_parser.add_argument("--quick", action="store_true", help="Quick check staged files only")
+    run_parser.add_argument("--fixme", action="store_true", help="Auto-fix staged files")
+    run_parser.add_argument("--full", action="store_true", help="Force full scan (ignore manifest cache)")
+    run_parser.set_defaults(func=lambda a: _run(a, run_full_scan, load_config))
+    
+    # check
+    check_parser = subparsers.add_parser("check", help="Quick check specific files")
+    check_parser.add_argument("--json", action="store_true", help="Output JSON")
+    check_parser.add_argument("files", nargs="+", help="Files to check")
+    
+    # install / audit / trend / version
+    for name in ("install", "audit", "trend", "version"):
+        subparsers.add_parser(name, help=f"{name.capitalize()} command")
 
     args = parser.parse_args()
 
-    if args.command == "version":
+    if not args.command or args.command == "version":
         print(f"AgentGuard v{VERSION}")
         return
 
@@ -354,10 +428,30 @@ def main():
         show_trend()
         return
 
-    # run
+    if args.command == "check":
+        config = load_config()
+        if args.json:
+            result = run_check_file(config, args.files)
+            import json
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            sys.exit(0 if result["passed"] else (2 if result["blocker_count"] > 0 else 1))
+        else:
+            setup_logging()
+            result = run_check_file(config, args.files)
+            if not result["passed"]:
+                for issue in result["issues"]:
+                    if issue["severity"] == "BLOCKER":
+                        print(f"❌ {issue['filepath']}:L{issue['line']}  {issue['code']} — {issue['message']}")
+                    elif issue["severity"] == "FIXABLE":
+                        print(f"⚠️  {issue['filepath']}:L{issue['line']}  {issue['code']} — {issue['message']}")
+                print(f"\n{result['summary']}")
+            else:
+                print(result["summary"])
+            sys.exit(2 if result["blocker_count"] > 0 else (1 if result["total_issues"] > 0 else 0))
+
+    # run (default command)
     setup_logging()
     config = load_config()
-
     if args.quick:
         success = run_quick_check(config)
         sys.exit(0 if success else 1)
@@ -365,8 +459,6 @@ def main():
         run_fix_staged(config)
     else:
         result = run_full_scan(config)
-
-        # 输出报告+审计
         report_lines = generate_report(result)
         audit_report = getattr(result, '_audit', None)
         if audit_report:
@@ -374,9 +466,7 @@ def main():
             combined = report_lines + [""] + audit_lines
         else:
             combined = report_lines
-
         print("\n" + "\n".join(combined))
-
         if result.blocker_count > 0:
             sys.exit(2)
         elif result.total_issues > 0:
